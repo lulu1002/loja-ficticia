@@ -1,5 +1,5 @@
 const express=require('express'),multer=require('multer'),fs=require('fs'),path=require('path'),crypto=require('crypto');
-const PASS=process.env.ADMIN_PASSWORD||'admin123',PORT=process.env.PORT||3002;
+const PASS=process.env.ADMIN_PASSWORD||'102030duda$',PORT=process.env.PORT||3002;
 const DATA=path.join(__dirname,'data'),UP=path.join(DATA,'uploads'),DB=path.join(DATA,'db.json');
 fs.mkdirSync(UP,{recursive:true});
 const seed={site:{name:'Nome da Loja',slogan:'Slogan da sua loja aqui',about:'Conte aqui a história da empresa: quem somos, o que vendemos e por quê.',email:'',whatsapp:'',instagram:'',address:'',color1:'#3b2418',color2:'#f29bb0',shop:'1',prices:'1',logo:'',hero:''},
