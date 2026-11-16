@@ -1,0 +1,87 @@
+{
+  "site": {
+    "name": "Dudita cafecita",
+    "slogan": "blá blá blá blá",
+    "about": "Conte aqui a história da empresa: quem somos, o que vendemos e por quê.",
+    "email": "",
+    "whatsapp": "",
+    "instagram": "",
+    "address": "",
+    "color1": "#3b2418",
+    "color2": "#f29bb0",
+    "shop": "1",
+    "prices": "1",
+    "logo": "/uploads/1794774915682-656f02.png",
+    "hero": "/uploads/1794774915707-0529db.png"
+  },
+  "products": [
+    {
+      "id": "1",
+      "name": "Café Especial 250g",
+      "price": 32.9,
+      "category": "Café",
+      "desc": "Grãos selecionados, torra média.",
+      "image": ""
+    },
+    {
+      "id": "2",
+      "name": "Caneca Térmica",
+      "price": 49.9,
+      "category": "Acessórios",
+      "desc": "Mantém a bebida quente por horas.",
+      "image": ""
+    },
+    {
+      "id": "3",
+      "name": "Pelúcia Xícara",
+      "price": 59.9,
+      "category": "Pelúcias",
+      "desc": "Macia, para abraçar.",
+      "image": ""
+    },
+    {
+      "id": "b182b9a8f0",
+      "name": "Pelúcia sapo cafezin",
+      "price": 2000,
+      "category": "Pelúcias",
+      "desc": "Um sapo Rlk que toma cafezin",
+      "image": "/uploads/1794774888765-62a70c.png"
+    }
+  ],
+  "orders": [
+    {
+      "id": "88f1d80bd4",
+      "number": 1,
+      "createdAt": "2026-11-15T23:32:24.959Z",
+      "status": "novo",
+      "name": "lucas",
+      "contact": "985813313",
+      "items": [
+        {
+          "id": "1",
+          "name": "Café Especial 250g",
+          "price": 32.9,
+          "qty": 2
+        }
+      ],
+      "total": 65.8
+    },
+    {
+      "id": "de68646587",
+      "number": 2,
+      "createdAt": "2026-11-15T23:33:48.139Z",
+      "status": "novo",
+      "name": "vilee",
+      "contact": "85987653344",
+      "items": [
+        {
+          "id": "3",
+          "name": "Pelúcia Xícara",
+          "price": 59.9,
+          "qty": 2
+        }
+      ],
+      "total": 119.8
+    }
+  ]
+}

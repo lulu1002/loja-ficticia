@@ -1,0 +1,82 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Painel admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:#fff6f7;--card:#fff;--ink:#2a1b16;--line:#e3d3d3;--ac:#3b2418}
+@media(prefers-color-scheme:dark){:root{--bg:#1d1613;--card:#2a201b;--ink:#f3ece6;--line:#4a3b33;--ac:#f29bb0}}
+*{box-sizing:border-box}body{margin:0;font:1.0625rem/1.5 Karla,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:820px;margin:auto;padding:1.2rem}h1{margin:.2rem 0 1rem;font:400 2.2rem/1.1 Caprasimo,Georgia,serif}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.1rem;margin-bottom:1rem}
+label{display:block;font-weight:600;margin:.7rem 0 .2rem}
+input,textarea,select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--bg);color:var(--ink)}
+input[type=color]{height:42px;padding:2px}input[type=file]{padding:.4rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:.55rem 1rem;background:var(--ac);color:var(--bg);font-weight:600}
+button.sec{background:none;color:var(--ink);border:1px solid var(--line)}button.del{background:#c0392b;color:#fff}
+.tabs{display:flex;gap:.5rem;margin-bottom:1rem}.tabs button{background:none;color:var(--ink);border:1px solid var(--line)}.tabs button.on{background:var(--ac);color:var(--bg)}
+.p{display:flex;gap:.8rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--line)}.p img,.p .ph{width:54px;height:54px;border-radius:10px;object-fit:cover;background:var(--line);display:grid;place-items:center}.p div{flex:1}
+#msg{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--ac);color:var(--bg);padding:.6rem 1rem;border-radius:99px;display:none}
+.oh{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}.oi{margin:.4rem 0;padding-left:1.2rem}.oa{display:flex;gap:.6rem;align-items:center}.oa select{width:auto}
+.thumb{max-height:70px;margin-top:.4rem;border-radius:8px}.hide{display:none}:focus-visible{outline:3px solid #f29bb0;outline-offset:2px}
+</style></head><body><main>
+<div id="login" class="box"><h1>Painel admin</h1><label for="pw">Senha</label><input id="pw" type="password" autocomplete="current-password"><p><button id="go">Entrar</button></p></div>
+<div id="app" class="hide"><h1>Painel admin <a href="/" style="font-size:1rem;margin-left:.6rem">ver site</a></h1>
+<div class="tabs"><button class="on" data-t="s">Dados da loja</button><button data-t="p">Produtos</button><button data-t="o" id="tabo">Pedidos</button></div>
+<form id="fs" class="box"><div class="two"><div><label>Nome da loja</label><input name="name"></div><div><label>Slogan</label><input name="slogan"></div></div>
+<label>Sobre a empresa</label><textarea name="about" rows="5"></textarea>
+<div class="two"><div><label>E-mail</label><input name="email"></div><div><label>WhatsApp (com DDD)</label><input name="whatsapp" placeholder="5511999999999"></div>
+<div><label>Instagram</label><input name="instagram"></div><div><label>Endereço</label><input name="address"></div>
+<div><label>Cor principal</label><input type="color" name="color1"></div><div><label>Cor de destaque</label><input type="color" name="color2"></div>
+<div><label>Logo</label><input type="file" name="logo" accept="image/*"><img id="tl" class="thumb hide" alt=""></div><div><label>Imagem de capa</label><input type="file" name="hero" accept="image/*"><img id="th" class="thumb hide" alt=""></div></div>
+<label style="display:flex;gap:.6rem;align-items:center;margin-top:1rem"><input type="checkbox" id="shop" style="width:auto"> Mostrar carrinho e botões "Adicionar ao carrinho" (desligue para usar o site como vitrine)</label>
+<label style="display:flex;gap:.6rem;align-items:center;margin-top:.6rem"><input type="checkbox" id="prices" style="width:auto"> Mostrar preços dos produtos</label>
+<p><button>Salvar loja</button></p></form>
+<div id="op" class="hide"><div class="box" style="display:flex;gap:.6rem;align-items:center"><label for="ofilter" style="margin:0">Mostrar</label><select id="ofilter" style="width:auto"><option value="">todos</option><option>novo</option><option>pago</option><option>enviado</option><option>entregue</option><option>cancelado</option></select><button type="button" class="sec" id="orefresh">Atualizar</button></div><div id="olist"></div></div>
+<div id="pp" class="hide"><form id="fp" class="box"><h2 id="ft" style="margin-top:0">Novo produto</h2><input type="hidden" name="id">
+<div class="two"><div><label>Nome</label><input name="name" required></div><div><label>Preço (R$)</label><input name="price" inputmode="decimal" required></div>
+<div><label>Categoria</label><input name="category" list="cats" placeholder="Café, Pelúcias…"><datalist id="cats"><option>Café<option>Acessórios<option>Pelúcias</datalist></div><div><label>Imagem</label><input type="file" name="image" accept="image/*"></div></div>
+<label>Descrição</label><textarea name="desc" rows="3"></textarea><p><button>Salvar produto</button> <button type="button" class="sec" id="cancel">Limpar</button></p></form>
+<div class="box" id="list"></div></div></div></main><div id="msg" role="status"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tok='';try{tok=sessionStorage.getItem('tok')||''}catch{}
+const toast=m=>{const e=$('#msg');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',2500)};
+async function api(url,opt={}){opt.headers={...(opt.headers||{}),'x-token':tok};const r=await fetch(url,opt),j=await r.json().catch(()=>({}));
+if(r.status===401&&tok){tok='';try{sessionStorage.removeItem('tok')}catch{}show(false)}if(!r.ok)throw new Error(j.error||'Erro');return j}
+function show(on){$('#login').classList.toggle('hide',on);$('#app').classList.toggle('hide',!on);if(on){load();listO()}}
+$('#go').onclick=async()=>{try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#pw').value})}),j=await r.json();
+if(!r.ok)throw new Error(j.error);tok=j.token;try{sessionStorage.setItem('tok',tok)}catch{}show(true)}catch(e){toast(e.message)}};
+$('#pw').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+$('#fs').classList.toggle('hide',b.dataset.t!=='s');$('#pp').classList.toggle('hide',b.dataset.t!=='p');$('#op').classList.toggle('hide',b.dataset.t!=='o');if(b.dataset.t==='o')listO()});
+async function load(){const s=await fetch('/api/site').then(r=>r.json());const f=$('#fs');
+for(const k of ['name','slogan','about','email','whatsapp','instagram','address','color1','color2'])f.elements[k].value=s[k]||'';$('#shop').checked=s.shop!=='0';$('#prices').checked=s.prices!=='0';
+for(const [k,id] of [['logo','tl'],['hero','th']]){const i=$('#'+id);i.classList.toggle('hide',!s[k]);if(s[k])i.src=s[k]}listP()}
+$('#fs').onsubmit=async e=>{e.preventDefault();try{const fd=new FormData(e.target);fd.set('shop',$('#shop').checked?'1':'0');fd.set('prices',$('#prices').checked?'1':'0');await api('/api/admin/site',{method:'PUT',body:fd});toast('Loja salva!');load()}catch(x){toast(x.message)}};
+let prods=[];
+async function listP(){prods=await fetch('/api/products').then(r=>r.json());
+$('#list').innerHTML=prods.map(p=>`<div class="p">${p.image?`<img src="${esc(p.image)}" alt="">`:'<div class="ph"></div>'}<div><b>${esc(p.name)}</b><br><small>${esc(p.category)} · R$ ${Number(p.price).toFixed(2)}</small></div>
+<button class="sec" data-e="${esc(p.id)}">Editar</button><button class="del" data-d="${esc(p.id)}">Excluir</button></div>`).join('')||'<p>Nenhum produto. Use o formulário acima.</p>'}
+$('#list').onclick=async e=>{const t=e.target;
+if(t.dataset.e){const p=prods.find(x=>x.id===t.dataset.e),f=$('#fp');for(const k of ['id','name','price','category','desc'])f.elements[k].value=p[k]??'';$('#ft').textContent='Editando produto';scrollTo({top:0})}
+if(t.dataset.d&&confirm('Excluir este produto?')){try{await api('/api/admin/products/'+t.dataset.d,{method:'DELETE'});toast('Excluído');listP()}catch(x){toast(x.message)}}};
+const clear=()=>{$('#fp').reset();$('#fp').elements.id.value='';$('#ft').textContent='Novo produto'};$('#cancel').onclick=clear;
+$('#fp').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target),id=fd.get('id');fd.delete('id');
+try{await api(id?'/api/admin/products/'+id:'/api/admin/products',{method:id?'PUT':'POST',body:fd});toast('Produto salvo!');clear();listP()}catch(x){toast(x.message)}};
+let orders=[];const ST=['novo','pago','enviado','entregue','cancelado'];
+const when=d=>new Date(d).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}),brl=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const contactHtml=c=>{const e=esc(c);if(/^\S+@\S+$/.test(c))return `<a href="mailto:${e}">${e}</a>`;const n=c.replace(/\D/g,'');
+if(n.length>=10&&/^[\d\s()+-]+$/.test(c))return `<a href="https://wa.me/${n.length<=11?'55'+n:n}" target="_blank" rel="noopener">${e}</a>`;return e};
+async function listO(){try{orders=await api('/api/admin/orders')}catch(x){return toast(x.message)}drawO()}
+function drawO(){const f=$('#ofilter').value,n=orders.filter(o=>o.status==='novo').length;
+$('#tabo').textContent=n?`Pedidos (${n} ${n>1?'novos':'novo'})`:'Pedidos';
+$('#olist').innerHTML=orders.filter(o=>!f||o.status===f).map(o=>`<div class="box"><div class="oh"><b>Pedido nº ${o.number}</b><small>${when(o.createdAt)}</small></div>
+<p style="margin:.4rem 0">${esc(o.name)}: ${contactHtml(o.contact)}</p>
+<ul class="oi">${o.items.map(i=>`<li>${i.qty}x ${esc(i.name)} <small>(${brl(i.price)} cada)</small></li>`).join('')}</ul>
+<p><b>Total: ${brl(o.total)}</b></p>
+<div class="oa"><select data-s="${esc(o.id)}" aria-label="Status do pedido ${o.number}">${ST.map(s=>`<option${s===o.status?' selected':''}>${s}</option>`).join('')}</select><button class="del" data-x="${esc(o.id)}">Excluir</button></div></div>`).join('')||'<p>Nenhum pedido por aqui ainda.</p>'}
+$('#olist').onchange=async e=>{const id=e.target.dataset.s;if(!id)return;
+try{await api('/api/admin/orders/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:e.target.value})});toast('Status atualizado')}catch(x){toast(x.message)}listO()};
+$('#olist').onclick=async e=>{const id=e.target.dataset.x;if(id&&confirm('Excluir este pedido?')){try{await api('/api/admin/orders/'+id,{method:'DELETE'});toast('Pedido excluído');listO()}catch(x){toast(x.message)}}};
+$('#ofilter').onchange=drawO;$('#orefresh').onclick=listO;
+if(tok)show(true);
+</script></body></html>
